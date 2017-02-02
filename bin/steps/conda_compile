@@ -18,7 +18,7 @@ if [ -f custom-commands.txt ]; then
     while IFS='' read -r line || [[ -n "$line" ]]; do
         echo "$line"
     	eval "$line --yes | indent"
-	done < conda-custom-install-commands.txt
+	done < custom-commands.txt
 fi
 
 if [ -f conda-requirements.txt ]; then
