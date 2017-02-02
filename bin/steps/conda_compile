@@ -1,20 +1,22 @@
-if [ ! -d /app/.heroku/miniconda ]; then
-    puts-step "Preparing Python/Miniconda Environment"
-    curl -Os https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
-    bash Miniconda-latest-Linux-x86_64.sh  -p /app/.heroku/miniconda/ -b | indent
-    rm -fr Miniconda-latest-Linux-x86_64.sh
+export PATH=/app/.heroku/miniconda/bin:$PATH
 
-    conda install pip --yes | indent
+if [ -d /app/.heroku/miniconda ]; then
+    puts-step "Removing existing Conda Environment"
+
+    rm -fr /app/.heroku/miniconda
 fi
 
-echo "nomkl" > $HOME/.heroku/miniconda/conda-meta/pinned
-echo "added pinned file in $HOME/.heroku/miniconda/conda-meta/pinned"
-conda install nomkl
+puts-step "Preparing Python3/Miniconda Environment"
+curl -Os https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh -p /app/.heroku/miniconda/ -b | indent
+rm -fr Miniconda3-latest-Linux-x86_64.sh
 
-if [ -f conda-custom-install-commands.txt ]; then
-    puts-step "Installing dependencies using Custom Conda commands"
+conda install pip --yes | indent
+
+if [ -f custom-commands.txt ]; then
+    puts-step "Custom commands"
     while IFS='' read -r line || [[ -n "$line" ]]; do
-    	eval "$line --yes | indent"
+    	eval "$line | indent"
 	done < conda-custom-install-commands.txt
 fi
 
@@ -27,6 +29,3 @@ if [ -f requirements.txt ]; then
     puts-step "Installing dependencies using Pip"
     pip install -r requirements.txt  --exists-action=w --allow-all-external | indent
 fi
-
-# Clean up the installation environment .
-conda clean -pt --yes > /dev/null

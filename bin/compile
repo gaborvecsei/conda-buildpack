@@ -87,10 +87,11 @@ done
 
 # Set context environment variables.
 set-env PATH '$HOME/.heroku/miniconda/bin:$PATH'
+set-default-env PYTHONPATH '/app/.heroku/miniconda/lib/python3.5/site-packages:$PYTHONPATH'
 set-env PYTHONUNBUFFERED true
 set-default-env LANG en_US.UTF-8
 set-default-env PYTHONHASHSEED random
-set-default-env PYTHONPATH /app/
+
 
 # Experimental post_compile hook.
 source $BIN_DIR/steps/hooks/post_compile
